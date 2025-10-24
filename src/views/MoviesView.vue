@@ -67,7 +67,7 @@ const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
 
 
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
-        <img
+       <img
   :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
   :alt="movie.title"
   @click="openMovie(movie.id)"
@@ -126,6 +126,7 @@ const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-left:1.8vw ;
 }
 
 
@@ -148,6 +149,7 @@ const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
 
 .movie-details {
   padding: 0 0.5rem;
+  
 }
 
 

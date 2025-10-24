@@ -1,107 +1,60 @@
 <script setup>
-  import { ref, onMounted } from 'vue';
-  import api from '@/plugins/axios';
+  import { defineProps, onMounted } from 'vue';
+  import { useMovieStore } from '@/stores/movie';
+  const movieStore = useMovieStore();
 
-  const movies = ref([]);
-
-  const listMovies = async (genreId) => {
-      const response = await api.get('discover/movie', {
-          params: {
-              with_genres: genreId,
-              language: 'pt-BR'
-          }
-      });
-      movies.value = response.data.results
-  };
-
-  const genres = ref([]);
+  const props = defineProps({
+    movieId: {
+      type: Number,
+      required: true,
+    },
+  });
 
   onMounted(async () => {
-    const response = await api.get('genre/movie/list?language=pt-BR');
-    genres.value = response.data.genres;
+    await movieStore.getMovieDetail(props.movieId);
   });
-  import Loading from 'vue-loading-overlay';
-
-  const isLoading = ref(false);
 </script>
+
 <template>
-  <h1>Filmes</h1>
-  <ul class="genre-list">
-    <li
-    v-for="genre in genres"
-    :key="genre.id"
-    @click="listMovies(genre.id)"
-    class="genre-item"
-  >
-    {{ genre.name }}
-  </li>
-  <div class="movie-list">
-  <div v-for="movie in movies" :key="movie.id" class="movie-card">
-    <img
-      :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
-      :alt="movie.title"
-    />
-    <div class="movie-details">
-      <p class="movie-title">{{ movie.title }}</p>
-      <p class="movie-release-date">{{ movie.release_date }}</p>
-      <p class="movie-genres">{{ movie.genre_ids }}</p>
+  <div class="main">
+    <div class="content">
+      <img
+        :src="`https://image.tmdb.org/t/p/w185${movieStore.currentMovie.poster_path}`"
+        :alt="movieStore.currentMovie.title"
+      />
+
+      <div class="details">
+        <h1>Filme: {{ movieStore.currentMovie.title }}</h1>
+        <p>{{ movieStore.currentMovie.tagline }}</p>
+        <p>{{ movieStore.currentMovie.overview }}</p>
+        <p>Orçamento: ${{ movieStore.currentMovie.budget }}</p>
+        <p>Avaliação: {{ movieStore.currentMovie.vote_average }}</p>
+      </div>
     </div>
   </div>
-</div>
-  </ul>
-  <loading v-model:active="isLoading" is-full-page />
+
+  <p>Produtoras</p>
+  <div class="companies">
+    <template
+      v-for="company in movieStore.currentMovie.production_companies"
+      :key="company.id"
+    >
+      <img
+        v-if="company.logo_path"
+        :src="`https://image.tmdb.org/t/p/w92${company.logo_path}`"
+        :alt="company.name"
+      />
+      <p v-else>{{ company.name }}</p>
+    </template>
+  </div>
 </template>
+
 <style scoped>
-.genre-list {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-  list-style: none;
-  margin-bottom: 2rem;
-}
-
-.genre-item {
-  background-color: #387250;
-  border-radius: 1rem;
-  padding: 0.5rem 1rem;
-  color: #fff;
-}
-
-.genre-item:hover {
-  cursor: pointer;
-  background-color: #4e9e5f;
-  box-shadow: 0 0 0.5rem #387250;
-}
-.movie-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.movie-card {
-  width: 15rem;
-  height: 30rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0 0 0.5rem #000;
-}
-
-.movie-card img {
-  width: 100%;
-  height: 20rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 0.5rem #000;
-}
-
-.movie-details {
-  padding: 0 0.5rem;
-}
-
-.movie-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  line-height: 1.3rem;
-  height: 3.2rem;
-}
+  .companies {
+    display: flex;
+    flex-direction: row;
+    column-gap: 3rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
 </style>

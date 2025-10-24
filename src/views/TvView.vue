@@ -3,11 +3,17 @@ import Loading from 'vue-loading-overlay'
 import { useGenreStore } from '@/stores/genre'
 import { ref, onMounted } from 'vue'
 import api from '@/plugins/axios'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 
 const genreStore = useGenreStore()
 const genres = ref([])
 const isLoading = ref(false)
+
+function openMovie(movieId) {
+  router.push({ name: 'MovieDetails', params: { movieId } });
+}
 
 
 onMounted(async () => {
@@ -57,7 +63,7 @@ const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
     <div v-for="tvs in tv" :key="tvs.id" class="tv-card">
 
 
-      <img :src="`https://image.tmdb.org/t/p/w500${tvs.poster_path}`" :alt="tvs.name" />
+     <img :src="`https://image.tmdb.org/t/p/w500${tvs.poster_path}`" :alt="tvs.name" @click="openMovie(tvs.id)"/>
 
 
       <div class="tvs-details">
@@ -116,6 +122,7 @@ const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-left:1.8vw ;
 }
 
 
