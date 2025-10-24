@@ -149,7 +149,7 @@ const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
 
 .movie-details {
   padding: 0 0.5rem;
-  
+  font-size: 2;
 }
 
 
@@ -166,6 +166,7 @@ const formatDate = (date) => new Date(date).toLocaleDateString('pt-BR')
   gap: 2rem;
   list-style: none;
   margin-bottom: 2rem;
+  
 }
 .movie-genres {
   display: flex;
